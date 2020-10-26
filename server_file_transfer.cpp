@@ -87,7 +87,7 @@ int main(){
 
         nBytes = recvfrom(sockfd, net_buf,
                           NET_BUF_SIZE, sendrecvflag,
-                          (struct sockaddr*)&addr_con, &addrlen);
+                          (struct sockaddr*)&addr_con, (socklen_t*)&addrlen);
 
         fp = fopen(net_buf, "r");
         printf("\nFile Name Received: %s\n", net_buf);

@@ -32,7 +32,7 @@ char Cipher(char ch)
 }
 
 // function to receive file
-int recvFile(char* buf, int s)
+int recvFile(FILE *fp, char* buf, int s)
 {
     int i;
     char ch;
@@ -43,6 +43,7 @@ int recvFile(char* buf, int s)
             return 1;
         else
             printf("%c", ch);
+            fprintf(fp,"%c",ch);
     }
     return 0;
 }
@@ -76,16 +77,19 @@ int main()
                addrlen);
 
         printf("\n---------Data Received---------\n");
-
+	
+	fp = fopen("recv.txt","w");
+	
         while (1) {
             // receive
             clearBuf(net_buf);
             nBytes = recvfrom(sockfd, net_buf, NET_BUF_SIZE,
                               sendrecvflag, (struct sockaddr*)&addr_con,
-                              &addrlen);
+                              (socklen_t*)&addrlen);
 
             // process
-            if (recvFile(net_buf, NET_BUF_SIZE)) {
+            if (recvFile(fp,net_buf, NET_BUF_SIZE)) {
+            	fclose(fp);
                 break;
             }
         }
