@@ -26,10 +26,10 @@ void clearBuf(char* b)
 }
 
 // function for decryption
-char Cipher(char ch)
+/*char Cipher(char ch)
 {
     return ch ^ cipherKey;
-}
+}*/
 
 // function to receive file
 int recvFile(FILE *fp, char* buf, int s)
@@ -38,7 +38,7 @@ int recvFile(FILE *fp, char* buf, int s)
     char ch;
     for (i = 0; i < s; i++) {
         ch = buf[i];
-        ch = Cipher(ch);
+        //ch = Cipher(ch);
         if (ch == EOF)
             return 1;
         else
@@ -89,7 +89,7 @@ int main()
 
             // process
             if (recvFile(fp,net_buf, NET_BUF_SIZE)) {
-            	fclose(fp);
+		 fclose(fp);
                 break;
             }
         }
