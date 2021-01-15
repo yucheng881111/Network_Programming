@@ -30,17 +30,17 @@ int main(int argc,char *argv[]){
 	int port_num;
 	stream_port<<argv[1];
 	stream_port>>port_num;
-
+	
 
 	char inputBuffer[1000] = {};
-
+	
 	vector<USER> vec;
 
 	int tcp_sockfd=0,udp_sockfd=0,maxfdp,nready;
 	int new_socket,client_socket[15],max_client=15,activity,valread,sd;
-
+	
 	fd_set readfds;
-
+	
 	if((tcp_sockfd = socket(AF_INET,SOCK_STREAM,0))<0){
 		cout<<"tcp socket fail"<<endl;
 	}
@@ -60,7 +60,7 @@ int main(int argc,char *argv[]){
 
 	bind(tcp_sockfd,(struct sockaddr *)&serverInfo,sizeof(serverInfo));
 	listen(tcp_sockfd,15);
-
+	
 	if((udp_sockfd = socket(AF_INET,SOCK_DGRAM,0))<0){
 		cout<<"udp socket fail"<<endl;
 		return 0;
@@ -70,7 +70,7 @@ int main(int argc,char *argv[]){
 		cout<<"udp bind failed"<<endl;
 		return 0;
 	}
-
+	
 	puts("Waiting for connections ...");
 
 
@@ -78,9 +78,9 @@ int main(int argc,char *argv[]){
 	maxfdp=max(tcp_sockfd,udp_sockfd);
 
 	while(1){
-		FD_SET(tcp_sockfd, &readfds);
+		FD_SET(tcp_sockfd, &readfds); 
 	        FD_SET(udp_sockfd, &readfds);
-
+		
 		for(int i=0;i<max_client;++i){
 			sd=client_socket[i];
 			if(sd>0){
@@ -93,7 +93,7 @@ int main(int argc,char *argv[]){
 
 
 		nready = select(maxfdp+1, &readfds, NULL, NULL, NULL);
-
+		
 		if(nready<0){
 			cout<<"select error!"<<endl;
 		}
@@ -122,7 +122,7 @@ int main(int argc,char *argv[]){
 				}else{
 					inputBuffer[valread]='\0';
 					cout<<"Get from TCP socket "<<sd<<". Message: "<<inputBuffer<<endl;
-
+					
 					stringstream ss(inputBuffer);
 					string temp;
 					ss>>temp;
@@ -150,12 +150,12 @@ int main(int argc,char *argv[]){
 									(*it)=0;
 									break;
 								}
-
+							
 							}
 							s+=".";
 							send(sd,(const char *)s.c_str(),sizeof(inputBuffer),0);
 						}
-
+						
 					}else if(temp=="list-user"){
 						string s="Name   Email\n";
 						for(int i=0;i<vec.size();++i){
@@ -192,30 +192,30 @@ int main(int argc,char *argv[]){
 								send(sd,fail2,sizeof(fail2),0);
 							}
 						}
-
+						
 					}
 
 				}
-			}
+			}	
 		}
 
 
 		//UDP
-
-		if (FD_ISSET(udp_sockfd, &readfds)) {
-            		int len = sizeof(clientInfo);
-            		bzero(inputBuffer, sizeof(inputBuffer));
-            		printf("Get from UDP: ");
-            		recvfrom(udp_sockfd,inputBuffer,sizeof(inputBuffer),0,(struct sockaddr*)&clientInfo,(socklen_t *)&len);
+		
+		if (FD_ISSET(udp_sockfd, &readfds)) { 
+            		int len = sizeof(clientInfo); 
+            		bzero(inputBuffer, sizeof(inputBuffer)); 
+            		printf("Get from UDP: "); 
+            		recvfrom(udp_sockfd,inputBuffer,sizeof(inputBuffer),0,(struct sockaddr*)&clientInfo,(socklen_t *)&len); 
             		puts(inputBuffer);
-
+            		
             		stringstream ss(inputBuffer);
             		string temp;
             		ss>>temp; //register or whoami
-
+            		
             		const char success[]="Register successfully.";
             		const char fail[]="Username is already used.";
-
+            		
             		//register
             		if(inputBuffer[0]=='r'){
             			string temp1,temp2,temp3;
@@ -234,8 +234,8 @@ int main(int argc,char *argv[]){
             				vec.push_back(U);
             				sendto(udp_sockfd,(const char*)success,sizeof(success),0,(struct sockaddr*)&clientInfo, sizeof(clientInfo));
             			}
-
-
+            			
+            		
             		}else{ //whoami
             			int num;
             			ss>>num;
@@ -250,10 +250,10 @@ int main(int argc,char *argv[]){
 		    				}
 		    			}
             			}
-            		}
+            		}	
         	}
 	}
-
+	
 return 0;
 }
 
